@@ -3240,3 +3240,51 @@ body {
     .hero-buttons { flex-direction: column; align-items: stretch; }
     .btn { width: 100%; padding: 18px; }
 }
+/* ===== Hisob va buyurtmalar (localStorage demo) ===== */
+.form-error {
+    margin: 0 0 15px;
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: var(--danger);
+    font-size: 14px;
+}
+
+.form-error[hidden] {
+    display: none;
+}
+
+.empty-state {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.empty-state a {
+    color: var(--primary);
+}
+
+.booking-status.cancelled {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+}
+
+.booking-item.is-cancelled {
+    opacity: 0.6;
+}
+
+.booking-info h4 small {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.booking-info .booking-meta {
+    margin-top: 2px;
+}
+
+.booking-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}

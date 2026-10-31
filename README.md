@@ -70,21 +70,34 @@ Ushbu loyiha foydalanuvchilarga barcha umra va haj uchun yo'llanmalar, mehmonxon
 - PDF yuklab olish
 
 ### 6. 📋 Online Buyurtma
-- Shaxsiy ma'lumotlar formasi
-- Yo'llanma tanlash
-- Ellikboshi tanlash
-- Yo'llanma shakli (elektron/qog'oz)
-- Buyurtma xulosasi
+- Shaxsiy ma'lumotlar formasi (passport `AA1234567` formatida tekshiriladi)
+- Yo'llanma turi va agentlikka qarab paketlar ro'yxati
+- "Yo'llanmalar" jadvalidagi **Buyurtma** tugmasi paketni oldindan tanlaydi
+- Ellikboshi va yo'llanma shakli (elektron/qog'oz)
+- Narx va muddat bilan jonli buyurtma xulosasi
 
 ### 7. 👤 Hisob Raqam
 - Profil ma'lumotlari
-- Buyurtmalar tarixi
-- Tezkor amallar
+- Buyurtmalar tarixi (holati bilan), buyurtmani bekor qilish
+- Buyurtma ma'lumotnomasini `.txt` fayl qilib yuklab olish
 
 ### 8. 🔐 Kirish/Ro'yxatdan o'tish
-- Email/telefon bilan kirish
-- Google orqali kirish
-- Yangi hisob yaratish
+- Email yoki telefon bilan ro'yxatdan o'tish va kirish
+- "Eslab qolish": belgilanmasa, sessiya brauzer yopilganda tugaydi
+- Kabinet faqat hisobga kirganda ochiladi
+
+---
+
+## ⚙️ Qanday ishlaydi (demo rejimi)
+
+Sayt hozircha **serversiz** ishlaydi: barcha ma'lumotlar foydalanuvchining brauzerida (`localStorage`) saqlanadi.
+
+- Hisoblar, sessiya va buyurtmalar faqat shu brauzerda ko'rinadi, boshqa qurilmaga o'tmaydi.
+- Parol ochiq saqlanmaydi, brauzerda SHA-256 bilan xeshlanadi. Lekin bu haqiqiy server autentifikatsiyasi o'rnini bosmaydi.
+- **Haqiqiy to'lov yo'q**: buyurtma "Ko'rib chiqilmoqda" holatida saqlanadi, to'lov agentlik bilan alohida kelishiladi.
+- Sahifa manzili (`#booking`, `#account`, ...) saqlanadi, shuning uchun sahifani yangilaganda shu sahifa ochiladi.
+
+Server qismi qo'shilganda `js/store.js` dagi `Store` obyektini API chaqiruvlari bilan almashtirish kifoya: qolgan kod undan foydalanadi.
 
 ---
 
@@ -131,12 +144,16 @@ http://localhost:8000
 
 ```
 hajsave/
-├── index.html              # Asosiy sahifa (1361 qator)
+├── index.html              # Barcha sahifalar (SPA)
 ├── css/
 │   ├── style.css           # Asosiy stillar
 │   └── responsive.css      # Responsive dizayn
 ├── js/
-│   └── main.js             # JavaScript
+│   ├── store.js            # Ma'lumotlar: foydalanuvchi, sessiya, buyurtmalar (localStorage), paketlar ro'yxati
+│   ├── main.js             # Sahifalar orasida o'tish (hash-routing), umumiy funksiyalar
+│   ├── auth.js             # Kirish, ro'yxatdan o'tish, chiqish
+│   ├── booking.js          # Buyurtma formasi va xulosa
+│   └── account.js          # Shaxsiy kabinet
 ├── assets/
 │   └── images/             # Rasmlar
 │       ├── kaaba.jpg

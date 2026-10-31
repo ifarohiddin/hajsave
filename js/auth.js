@@ -1,50 +1,110 @@
-// js/auth.js
-document.getElementById('loginForm')?.addEventListener('submit', e => {
-    e.preventDefault();
-    const email = e.target.querySelector('input[type=text], input[type=email]').value.trim();
-    const password = e.target.querySelector('input[type=password]').value;
+// js/auth.js — kirish, ro'yxatdan o'tish va chiqish
 
-    if (email && password) {
-        app.isLoggedIn = true;
-        app.user = { email, name: "Ahmad Karimov" };
-        showNotification('Muvaffaqiyatli kirish!', 'success');
-        navigateTo('dashboard');
-        updateAuthUI();
-    } else {
-        showNotification('Iltimos, barcha maydonlarni to‘ldiring', 'error');
+// Kirish talab qilingan sahifaga borilganda, kirgandan keyin o'sha sahifaga qaytamiz
+let pageAfterLogin = 'account';
+
+function setFormError(form, message) {
+    const box = form.querySelector('.form-error');
+    if (!box) return;
+    box.textContent = message || '';
+    box.hidden = !message;
+}
+
+function requireLogin(pageId) {
+    if (Store.currentUser()) return true;
+    pageAfterLogin = pageId;
+    showNotification('Davom etish uchun hisobingizga kiring', 'info');
+    navigateTo('login');
+    return false;
+}
+
+function finishLogin(user, remember) {
+    Store.startSession(user, remember);
+    updateAuthUI();
+    showNotification(`Xush kelibsiz, ${user.name.split(' ')[0]}!`, 'success');
+    const target = pageAfterLogin;
+    pageAfterLogin = 'account';
+    navigateTo(target);
+}
+
+document.getElementById('loginForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const login = form.elements.login.value.trim();
+    const password = form.elements.password.value;
+    if (!login || !password) {
+        setFormError(form, "Iltimos, barcha maydonlarni to'ldiring");
+        return;
+    }
+    const user = await Store.verify(login, password);
+    if (!user) {
+        setFormError(form, "Email/telefon yoki parol noto'g'ri");
+        return;
+    }
+    const remember = form.elements.remember.checked;  // reset() dan oldin o'qiymiz
+    setFormError(form, '');
+    form.reset();
+    finishLogin(user, remember);
+});
+
+document.getElementById('registerForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.elements.name.value.trim();
+    const login = form.elements.login.value.trim();
+    const password = form.elements.password.value;
+    const confirm = form.elements.confirm.value;
+
+    if (name.length < 3) return setFormError(form, "Ism va familiyani to'liq kiriting");
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login);
+    const isPhone = /^\+?\d{9,15}$/.test(login.replace(/[\s()-]/g, ''));
+    if (!isEmail && !isPhone) return setFormError(form, "To'g'ri email yoki telefon raqamini kiriting");
+    if (password.length < 6) return setFormError(form, "Parol kamida 6 belgidan iborat bo'lsin");
+    if (password !== confirm) return setFormError(form, 'Parollar bir xil emas');
+
+    try {
+        const user = await Store.register({ name, login, password });
+        setFormError(form, '');
+        form.reset();
+        finishLogin(user, true);
+    } catch (err) {
+        setFormError(form, err.message);
     }
 });
 
 function showRegister(e) {
-    e.preventDefault();
-    const name = prompt("Ismingizni kiriting:");
-    const email = prompt("Email yoki telefon:");
-    const password = prompt("Yangi parol:");
+    e?.preventDefault();
+    navigateTo('register');
+}
 
-    if (name && email && password) {
-        app.isLoggedIn = true;
-        app.user = { name, email };
-        showNotification('Ro‘yxatdan o‘tish muvaffaqiyatli!', 'success');
-        navigateTo('dashboard');
-        updateAuthUI();
-    }
+function showLogin(e) {
+    e?.preventDefault();
+    navigateTo('login');
 }
 
 function logout() {
-    app.isLoggedIn = false;
-    app.user = null;
-    showNotification('Chiqish amalga oshirildi', 'info');
-    navigateTo('home');
+    Store.endSession();
     updateAuthUI();
+    showNotification('Hisobdan chiqdingiz', 'info');
+    navigateTo('home');
 }
 
 function updateAuthUI() {
-    const loginBtn = document.querySelector('.btn-primary[onclick="navigateTo(\'login\')"]');
-    if (app.isLoggedIn && loginBtn) {
-        loginBtn.innerHTML = `<span>${app.user.name.split(' ')[0]}</span> <svg width="16" height="16" viewBox="0 0 20 20"><path d="M6 4l8 6-8 6V4z" fill="currentColor"/></svg>`;
-        loginBtn.onclick = () => navigateTo('settings');
+    const button = document.getElementById('authButton');
+    if (!button) return;
+    const user = Store.currentUser();
+    const label = button.querySelector('span');
+    if (user) {
+        label.textContent = user.name.split(' ')[0];
+        button.onclick = () => navigateTo('account');
+    } else {
+        label.textContent = 'Kirish';
+        button.onclick = () => navigateTo('login');
     }
 }
 
+window.requireLogin = requireLogin;
 window.showRegister = showRegister;
+window.showLogin = showLogin;
 window.logout = logout;
+window.updateAuthUI = updateAuthUI;

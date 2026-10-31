@@ -44,7 +44,7 @@
                     <a href="#packages" class="nav-link" onclick="navigateTo('packages')">Yo'llanmalar</a>
                     <a href="#guides" class="nav-link" onclick="navigateTo('guides')">Ellikboshilar</a>
                     <a href="#items" class="nav-link" onclick="navigateTo('items')">Kerakli buyumlar</a>
-                    <button class="btn btn-primary" onclick="navigateTo('login')">
+                    <button class="btn btn-primary" id="authButton" onclick="navigateTo('login')">
                         <i data-lucide="log-in" style="width:18px;height:18px"></i>
                         <span>Kirish</span>
                     </button>
@@ -998,34 +998,34 @@
             <div class="booking-wrapper">
                 <!-- Booking Form -->
                 <div class="booking-form-section">
-                    <form class="booking-form">
+                    <form class="booking-form" id="bookingForm" novalidate>
                         <!-- Step 1: Personal Info -->
                         <div class="form-section">
                             <h3><i data-lucide="user"></i> Shaxsiy ma'lumotlar</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Ism *</label>
-                                    <input type="text" class="form-input" placeholder="Ismingiz" required>
+                                    <input type="text" class="form-input" name="firstName" placeholder="Ismingiz" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Familiya *</label>
-                                    <input type="text" class="form-input" placeholder="Familiyangiz" required>
+                                    <input type="text" class="form-input" name="lastName" placeholder="Familiyangiz" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Otasining ismi *</label>
-                                    <input type="text" class="form-input" placeholder="Otangizning ismi" required>
+                                    <input type="text" class="form-input" name="middleName" placeholder="Otangizning ismi" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Tug'ilgan sana *</label>
-                                    <input type="date" class="form-input" required>
+                                    <input type="date" class="form-input" name="birthDate" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Passport raqami *</label>
-                                    <input type="text" class="form-input" placeholder="AA1234567" required>
+                                    <input type="text" class="form-input" name="passport" placeholder="AA1234567" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Telefon raqami *</label>
-                                    <input type="tel" class="form-input" placeholder="+998 90 123 45 67" required>
+                                    <input type="tel" class="form-input" name="phone" placeholder="+998 90 123 45 67" required>
                                 </div>
                             </div>
                         </div>
@@ -1036,7 +1036,7 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Yo'llanma turi *</label>
-                                    <select class="form-select" required>
+                                    <select class="form-select" name="type" required>
                                         <option value="">Tanlang...</option>
                                         <option value="umra">Umra</option>
                                         <option value="haj">Haj</option>
@@ -1044,23 +1044,25 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Agentlik *</label>
-                                    <select class="form-select" required>
+                                    <select class="form-select" name="agency" required>
                                         <option value="">Tanlang...</option>
                                         <option value="alsafa">Al-Safa Travel</option>
                                         <option value="zamzam">Zamzam Tour</option>
                                         <option value="noor">Noor Tourism</option>
                                         <option value="madinah">Madinah Express</option>
+                                        <option value="hijra">Hijra Travel</option>
+                                        <option value="barakah">Barakah Tours</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Paket *</label>
-                                    <select class="form-select" required>
+                                    <select class="form-select" name="package" required>
                                         <option value="">Avval agentlik tanlang</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Jo'nash sanasi *</label>
-                                    <input type="date" class="form-input" required>
+                                    <input type="date" class="form-input" name="departure" required>
                                 </div>
                             </div>
                         </div>
@@ -1071,7 +1073,7 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Ellikboshi</label>
-                                    <select class="form-select">
+                                    <select class="form-select" name="guide">
                                         <option value="">Agentlik tayinlaydi</option>
                                         <option value="abdulloh">Abdulloh Karimov</option>
                                         <option value="muhammad">Muhammad Rashidov</option>
@@ -1080,7 +1082,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Yo'llanma shakli *</label>
-                                    <select class="form-select" required>
+                                    <select class="form-select" name="voucher" required>
                                         <option value="electronic">Elektron (Email orqali)</option>
                                         <option value="paper">Qog'oz (Ofisdan olish)</option>
                                     </select>
@@ -1088,12 +1090,13 @@
                             </div>
                             <div class="form-group">
                                 <label class="checkbox-label">
-                                    <input type="checkbox" required>
+                                    <input type="checkbox" name="terms" required>
                                     <span>Shartlar va qoidalar bilan tanishdim va roziman</span>
                                 </label>
                             </div>
                         </div>
 
+                        <p class="form-error" role="alert" hidden></p>
                         <button type="submit" class="btn btn-primary btn-lg btn-block">
                             <i data-lucide="send"></i> Buyurtmani yuborish
                         </button>
@@ -1105,28 +1108,28 @@
                     <h3>Buyurtma xulosasi</h3>
                     <div class="summary-item">
                         <span>Yo'llanma turi:</span>
-                        <strong>Tanlanmagan</strong>
+                        <strong id="summaryType">Tanlanmagan</strong>
                     </div>
                     <div class="summary-item">
                         <span>Agentlik:</span>
-                        <strong>Tanlanmagan</strong>
+                        <strong id="summaryAgency">Tanlanmagan</strong>
                     </div>
                     <div class="summary-item">
                         <span>Paket:</span>
-                        <strong>Tanlanmagan</strong>
+                        <strong id="summaryPackage">Tanlanmagan</strong>
                     </div>
                     <div class="summary-item">
                         <span>Muddat:</span>
-                        <strong>-</strong>
+                        <strong id="summaryDuration">-</strong>
                     </div>
                     <div class="summary-divider"></div>
                     <div class="summary-total">
                         <span>Jami narx:</span>
-                        <strong>0 so'm</strong>
+                        <strong id="summaryTotal">0 so'm</strong>
                     </div>
                     <div class="summary-note">
                         <i data-lucide="info"></i>
-                        <p>Narx yo'llanma tanlanganidan keyin ko'rsatiladi</p>
+                        <p id="summaryNote">Narx yo'llanma tanlanganidan keyin ko'rsatiladi</p>
                     </div>
                 </div>
             </div>
@@ -1153,53 +1156,28 @@
                         <div class="profile-avatar">
                             <i data-lucide="user"></i>
                         </div>
-                        <h3>Abduraxmon Toshmatov</h3>
-                        <p>ID: #12345</p>
+                        <h3 id="profileName">-</h3>
+                        <p id="profileId"></p>
                     </div>
                     <div class="profile-info">
                         <div class="info-item">
                             <i data-lucide="mail"></i>
-                            <span>abduraxmon@email.com</span>
+                            <span id="profileContact"></span>
                         </div>
                         <div class="info-item">
-                            <i data-lucide="phone"></i>
-                            <span>+998 90 123 45 67</span>
-                        </div>
-                        <div class="info-item">
-                            <i data-lucide="map-pin"></i>
-                            <span>Toshkent, O'zbekiston</span>
+                            <i data-lucide="calendar"></i>
+                            <span id="profileSince"></span>
                         </div>
                     </div>
-                    <button class="btn btn-secondary btn-block">
-                        <i data-lucide="edit"></i> Tahrirlash
+                    <button class="btn btn-secondary btn-block" onclick="logout()">
+                        <i data-lucide="log-out"></i> Chiqish
                     </button>
                 </div>
 
                 <!-- My Bookings -->
                 <div class="account-card">
                     <h3><i data-lucide="clipboard-list"></i> Mening buyurtmalarim</h3>
-                    <div class="bookings-list">
-                        <div class="booking-item">
-                            <div class="booking-status active">
-                                <i data-lucide="loader"></i>
-                            </div>
-                            <div class="booking-info">
-                                <h4>Umra Standart</h4>
-                                <p>Al-Safa Travel • 15 Yanvar 2026</p>
-                            </div>
-                            <div class="booking-price">15,500,000 so'm</div>
-                        </div>
-                        <div class="booking-item">
-                            <div class="booking-status completed">
-                                <i data-lucide="check"></i>
-                            </div>
-                            <div class="booking-info">
-                                <h4>Umra Ramazon 2025</h4>
-                                <p>Zamzam Tour • 10 Mart 2025</p>
-                            </div>
-                            <div class="booking-price">12,000,000 so'm</div>
-                        </div>
-                    </div>
+                    <div class="bookings-list" id="bookingsList"></div>
                 </div>
 
                 <!-- Quick Actions -->
@@ -1210,17 +1188,9 @@
                             <i data-lucide="plus"></i>
                             Yangi buyurtma
                         </button>
-                        <button class="action-btn">
+                        <button class="action-btn" onclick="downloadVoucher()">
                             <i data-lucide="download"></i>
-                            Yo'llanmani yuklab olish
-                        </button>
-                        <button class="action-btn">
-                            <i data-lucide="headphones"></i>
-                            Yordam markazi
-                        </button>
-                        <button class="action-btn">
-                            <i data-lucide="settings"></i>
-                            Sozlamalar
+                            Yo'llanma ma'lumotnomasini yuklab olish
                         </button>
                     </div>
                 </div>
@@ -1246,42 +1216,82 @@
                         <label>Email yoki telefon</label>
                         <div class="input-icon">
                             <i data-lucide="mail"></i>
-                            <input type="text" class="form-input" placeholder="email@example.com" required>
+                            <input type="text" class="form-input" name="login" placeholder="email@example.com yoki +998901234567" autocomplete="username" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Parol</label>
                         <div class="input-icon">
                             <i data-lucide="lock"></i>
-                            <input type="password" class="form-input" placeholder="••••••••" required>
+                            <input type="password" class="form-input" name="password" placeholder="••••••••" autocomplete="current-password" required>
                         </div>
                     </div>
                     <div class="form-options">
                         <label class="checkbox-label">
-                            <input type="checkbox">
+                            <input type="checkbox" name="remember" checked>
                             <span>Eslab qolish</span>
                         </label>
-                        <a href="#" class="forgot-link">Parolni unutdingizmi?</a>
                     </div>
+                    <p class="form-error" role="alert" hidden></p>
                     <button type="submit" class="btn btn-primary btn-block">
                         <i data-lucide="log-in"></i> Kirish
                     </button>
                 </form>
 
-                <div class="auth-divider">
-                    <span>yoki</span>
-                </div>
-
-                <div class="social-auth">
-                    <button class="social-btn google">
-                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
-                        Google
-                    </button>
-                </div>
-
                 <p class="auth-footer">
                     Hisobingiz yo'qmi? 
-                    <a href="#" onclick="showRegister()">Ro'yxatdan o'tish</a>
+                    <a href="#register" onclick="showRegister(event)">Ro'yxatdan o'tish</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- REGISTER PAGE -->
+    <section id="register" class="page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Ro'yxatdan o'tish</h2>
+                    <p>Yangi hisob yarating</p>
+                </div>
+                <form class="auth-form" id="registerForm" novalidate>
+                    <div class="form-group">
+                        <label>Ism va familiya</label>
+                        <div class="input-icon">
+                            <i data-lucide="user"></i>
+                            <input type="text" class="form-input" name="name" placeholder="Ali Valiyev" autocomplete="name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email yoki telefon</label>
+                        <div class="input-icon">
+                            <i data-lucide="mail"></i>
+                            <input type="text" class="form-input" name="login" placeholder="email@example.com yoki +998901234567" autocomplete="username" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Parol (kamida 6 belgi)</label>
+                        <div class="input-icon">
+                            <i data-lucide="lock"></i>
+                            <input type="password" class="form-input" name="password" placeholder="••••••••" autocomplete="new-password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Parolni tasdiqlang</label>
+                        <div class="input-icon">
+                            <i data-lucide="lock"></i>
+                            <input type="password" class="form-input" name="confirm" placeholder="••••••••" autocomplete="new-password" required>
+                        </div>
+                    </div>
+                    <p class="form-error" role="alert" hidden></p>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i data-lucide="user-plus"></i> Ro'yxatdan o'tish
+                    </button>
+                </form>
+                <p class="auth-footer">
+                    Hisobingiz bormi?
+                    <a href="#login" onclick="showLogin(event)">Kirish</a>
                 </p>
             </div>
         </div>
@@ -1330,7 +1340,11 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="js/store.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/account.js"></script>
     <script>
         // Lucide ikonlarni ishga tushirish
         if (typeof lucide !== 'undefined') {
@@ -1352,10 +1366,6 @@
         });
         observer.observe(document.body, { childList: true, subtree: true });
 
-        // Register form ko'rsatish
-        function showRegister() {
-            alert('Ro\'yxatdan o\'tish sahifasi tez orada qo\'shiladi!');
-        }
     </script>
 </body>
 </html>

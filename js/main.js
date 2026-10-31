@@ -1,25 +1,19 @@
 // js/main.js
-const app = {
-    currentPage: 'home',
-    user: null,
-    isLoggedIn: false,
-    balance: 12000000,
-    goal: 70000000,
-    progress: 17,
-    transactions: [
-        { id: 1, type: 'deposit', amount: 5000000, date: '2025-10-15', description: 'To‘lov qo‘shildi' },
-        { id: 2, type: 'deposit', amount: 3000000, date: '2025-11-03', description: 'To‘lov qo‘shildi' },
-        { id: 3, type: 'deposit', amount: 4000000, date: '2025-11-20', description: 'To‘lov qo‘shildi' }
-    ],
-    autoSave: { enabled: true, amount: 3000000, day: 1 }
-};
+const app = { currentPage: 'home' };
+
+// Faqat hisobga kirgan foydalanuvchiga ochiladigan sahifalar
+const PROTECTED_PAGES = ['account'];
 
 // Navigate
 function navigateTo(pageId) {
+    if (!document.getElementById(pageId)) pageId = 'home';
+    if (PROTECTED_PAGES.includes(pageId) && !requireLogin(pageId)) return;
+
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const page = document.getElementById(pageId);
-    if (page) page.classList.add('active');
+    document.getElementById(pageId).classList.add('active');
     app.currentPage = pageId;
+    // Manzil satrida sahifani saqlaymiz: yangilaganda shu sahifa ochiladi
+    if (location.hash !== `#${pageId}`) history.replaceState(null, '', `#${pageId}`);
 
     document.querySelectorAll('.nav-link').forEach(l => {
         l.classList.remove('active');
@@ -77,15 +71,21 @@ function showNotification(msg, type = 'info') {
 // Init page
 function initPage(pageId) {
     if (pageId === 'home') initCounters();
-    if (pageId === 'dashboard') initDashboard();
-    if (pageId === 'funds') initFunds();
+    if (pageId === 'booking') initBooking();
+    if (pageId === 'account') renderAccount();
 }
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
-    navigateTo('home');
-    initCounters();
     addAnimationStyles();
+    updateAuthUI();
+    navigateTo(location.hash.slice(1) || 'home');
+});
+
+// Brauzerdagi "orqaga" tugmasi va qo'lda yozilgan #manzil uchun
+window.addEventListener('hashchange', () => {
+    const pageId = location.hash.slice(1) || 'home';
+    if (pageId !== app.currentPage) navigateTo(pageId);
 });
 
 function initCounters() {
