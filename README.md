@@ -131,12 +131,12 @@ python -m http.server 8000
 http://localhost:8000
 ```
 
-### Netlify Deploy
+### Netlify'ga chiqarish
 
-1. [netlify.com](https://netlify.com) ga kiring
-2. "Add new site" → "Deploy manually"
-3. `hajsave` papkasini drag & drop qiling
-4. Tayyor!
+1. [app.netlify.com](https://app.netlify.com) → **Add new site** → **Import an existing project** → **GitHub**.
+2. Ro'yxatdan `ifarohiddin/hajsave` reposini tanlang (private bo'lsa, Netlify'ga shu repoga ruxsat bering).
+3. Sozlamalar `netlify.toml` dan avtomatik olinadi (build yo'q, publish: `.`), hech narsani o'zgartirmay **Deploy** ni bosing.
+4. Shundan keyin `main` ga har bir push saytni avtomatik yangilaydi. Manzilni **Site configuration → Change site name** orqali o'zgartirish mumkin.
 
 ---
 
